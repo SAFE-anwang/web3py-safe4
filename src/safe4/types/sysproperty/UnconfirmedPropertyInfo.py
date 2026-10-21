@@ -8,7 +8,7 @@ class UnconfirmedPropertyInfo:
     name: str
     value: int
     applicant: Address
-    voters: [Address]
-    voteResults: [int]
+    voters: list[Address]
+    voteResults: list[int]
     reason: str
     applyHeight: int
