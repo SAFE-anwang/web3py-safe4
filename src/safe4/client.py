@@ -1,9 +1,10 @@
 from web3 import Web3
 
-from .apis import SysProperty, AccountManager
+from .apis import SysProperty, AccountManager, MasterNode
 
 
 class Safe4:
     def __init__(self, w3: Web3):
         self.sysproperty: SysProperty = SysProperty(w3)
         self.accountmanager: AccountManager = AccountManager(w3)
+        self.masternode: MasterNode = MasterNode(w3)
