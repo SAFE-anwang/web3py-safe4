@@ -81,3 +81,33 @@ class MasterNode:
 
     def existID(self, id: int) -> bool:
         return self.storageContract.query(method="existID", parameters=[id], outType=bool)
+
+    def existEnode(self, enode: str) -> bool:
+        return self.storageContract.query(method="existEnode", parameters=[enode], outType=bool)
+
+    def existLockID(self, lockID: int) -> bool:
+        return self.storageContract.query(method="existLockID", parameters=[lockID], outType=bool)
+
+    def existFounder(self, founder: Address) -> bool:
+        return self.storageContract.query(method="existFounder", parameters=[founder], outType=bool)
+
+    def isValid(self, addr: Address) -> bool:
+        return self.storageContract.query(method="isValid", parameters=[addr], outType=bool)
+
+    def isUnion(self, addr: Address) -> bool:
+        return self.storageContract.query(method="isUnion", parameters=[addr], outType=bool)
+
+    def existNodeAddress(self, addr: Address) -> bool:
+        return self.storageContract.query(method="existNodeAddress", parameters=[addr], outType=bool)
+
+    def existNodeEnode(self, enode: str) -> bool:
+        return self.storageContract.query(method="existNodeEnode", parameters=[enode], outType=bool)
+
+    def existNodeFounder(self, founder: Address) -> bool:
+        return self.storageContract.query(method="existNodeFounder", parameters=[founder], outType=bool)
+
+    def isBindEnode(self, id: int, enode: str) -> bool:
+        return self.storageContract.query(method="isBindEnode", parameters=[id, enode], outType=bool)
+
+    def isValidEnode(self, enode: str) -> bool:
+        return self.storageContract.query(method="isValidEnode", parameters=[enode], outType=bool)
