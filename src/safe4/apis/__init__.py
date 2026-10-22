@@ -3,5 +3,6 @@ from .AccountManager import AccountManager
 from .MasterNode import MasterNode
 from .SuperNode import SuperNode
 from .SNVote import SNVote
+from .Proposal import Proposal
 
-__all__ = ["SysProperty", "AccountManager", "MasterNode", "SuperNode", "SNVote"]
+__all__ = ["SysProperty", "AccountManager", "MasterNode", "SuperNode", "SNVote", "Proposal"]
