@@ -1,6 +1,6 @@
 from web3 import Web3
 
-from .apis import SysProperty, AccountManager, MasterNode, SuperNode, SNVote, Proposal
+from .apis import SysProperty, AccountManager, MasterNode, SuperNode, SNVote, Proposal, Safe3
 
 
 class Safe4:
@@ -11,3 +11,4 @@ class Safe4:
         self.supernode: SuperNode = SuperNode(w3)
         self.snvote: SNVote = SNVote(w3)
         self.proposal: Proposal = Proposal(w3)
+        self.safe3: Safe3 = Safe3(w3)
