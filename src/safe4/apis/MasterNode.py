@@ -29,7 +29,7 @@ class MasterNode:
         return self.logicContract.call(privateKey=privateKey, method="changeAddress", parameters=[addr, newAddr])
 
     def changeEnode(self, privateKey: str, addr: Address, enode: str) -> str:
-        return self.logicContract.call(privateKey=privateKey, method="changeEnode", parameters=[enode, newEnode])
+        return self.logicContract.call(privateKey=privateKey, method="changeEnode", parameters=[addr, enode])
 
     def changeEnodeByID(self, privateKey: str, id: int, enode: str) -> str:
         return self.logicContract.call(privateKey=privateKey, method="changeEnodeByID", parameters=[id, enode])
