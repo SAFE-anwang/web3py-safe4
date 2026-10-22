@@ -1,6 +1,6 @@
 from web3 import Web3
 
-from .apis import SysProperty, AccountManager, MasterNode
+from .apis import SysProperty, AccountManager, MasterNode, SuperNode
 
 
 class Safe4:
@@ -8,3 +8,4 @@ class Safe4:
         self.sysproperty: SysProperty = SysProperty(w3)
         self.accountmanager: AccountManager = AccountManager(w3)
         self.masternode: MasterNode = MasterNode(w3)
+        self.supernode: SuperNode = SuperNode(w3)
