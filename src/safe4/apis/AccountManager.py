@@ -1,7 +1,7 @@
 from eth_typing import Address
 from web3 import Web3
 
-from ..types.accountmanager import AccountRecord, RecordUseInfo
+from ..types.accountmanager import AccountRecord, RecordUseInfo, AccountAmountInfo
 from ..utils import Safe4ContractAddress, Safe4ContractABI, Safe4Contract
 
 
@@ -31,26 +31,26 @@ class AccountManager(Safe4Contract):
     def getImmatureAmount(self, addr: Address) -> int:
         return self.query(method="getImmatureAmount", parameters=[addr], outType=int)
 
-    def getTotalAmount(self, addr: Address) -> int:
-        return self.query(method="getTotalAmount", parameters=[addr], outType=int)
+    def getTotalAmount(self, addr: Address) -> AccountAmountInfo:
+        return self.query(method="getTotalAmount", parameters=[addr], outType=AccountAmountInfo)
 
     def getTotalIDs(self, addr: Address, start: int, count: int) -> list[int]:
         return self.query(method="getTotalIDs", parameters=[addr, start, count], outType=list[int])
 
-    def getAvailableAmount(self, addr: Address) -> int:
-        return self.query(method="getAvailableAmount", parameters=[addr], outType=int)
+    def getAvailableAmount(self, addr: Address) -> AccountAmountInfo:
+        return self.query(method="getAvailableAmount", parameters=[addr], outType=AccountAmountInfo)
 
     def getAvailableIDs(self, addr: Address, start: int, count: int) -> list[int]:
         return self.query(method="getAvailableIDs", parameters=[addr, start, count], outType=list[int])
 
-    def getLockedAmount(self, addr: Address) -> int:
-        return self.query(method="getLockedAmount", parameters=[addr], outType=int)
+    def getLockedAmount(self, addr: Address) -> AccountAmountInfo:
+        return self.query(method="getLockedAmount", parameters=[addr], outType=AccountAmountInfo)
 
     def getLockedIDs(self, addr: Address, start: int, count: int) -> list[int]:
         return self.query(method="getLockedIDs", parameters=[addr, start, count], outType=list[int])
 
-    def getUsedAmount(self, addr: Address) -> int:
-        return self.query(method="getUsedAmount", parameters=[addr], outType=int)
+    def getUsedAmount(self, addr: Address) -> AccountAmountInfo:
+        return self.query(method="getUsedAmount", parameters=[addr], outType=AccountAmountInfo)
 
     def getUsedIDs(self, addr: Address, start: int, count: int) -> list[int]:
         return self.query(method="getUsedIDs", parameters=[addr, start, count], outType=list[int])
