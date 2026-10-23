@@ -1,6 +1,7 @@
 from web3 import Web3
 
 from .apis import SysProperty, AccountManager, MasterNode, SuperNode, SNVote, Proposal, Safe3
+from .apis.additions import DAppManager
 
 
 class Safe4:
@@ -12,3 +13,4 @@ class Safe4:
         self.snvote: SNVote = SNVote(w3)
         self.proposal: Proposal = Proposal(w3)
         self.safe3: Safe3 = Safe3(w3)
+        self.dappmanager: DAppManager = DAppManager(w3)
