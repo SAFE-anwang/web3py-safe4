@@ -21,13 +21,15 @@ class Safe4ContractAddress:
     SNVoteContractAddr = "0x0000000000000000000000000000000000001040"
     ProposalContractAddr = "0x0000000000000000000000000000000000001070"
     Safe3ContractAddr = "0x0000000000000000000000000000000000001090"
-    Safe4SwapContractAddress = "0x0000000000000000000000000000000000001101"
 
-    AccountManagerContractAddr_small_01_Test = "0xF6A2C019beF11825E73ed219c7b0582324dE91b2"
-    AccountManagerContractAddr_small_02_Test = "0xA7DBB85CB123106B0d227a317D00A53574694aC6"
+    # 0.1
+    PettyLock01_Test = "0xF6A2C019beF11825E73ed219c7b0582324dE91b2"
+    PettyLock01_Main = "0x5A9CDa846D12e047d87c06f633f2c4f344b33C97"
 
-    AccountManagerContractAddr_small_01_Main = "0x5A9CDa846D12e047d87c06f633f2c4f344b33C97"
-    AccountManagerContractAddr_small_02_Main = "0xF80D63cE916850CF131a4760853B9d685F8ec65a"
+    # 0.01
+    PettyLock001_Test = "0xA7DBB85CB123106B0d227a317D00A53574694aC6"
+    PettyLock001_Main = "0xF80D63cE916850CF131a4760853B9d685F8ec65a"
 
-    DAppManagerContractAddress_Test = "0x4C85a0888Fa40a959Ee31DFEc916475eB64931F7"
-    DAppManagerContractAddress_Main = "0x7A3cec37f4975CD2f3cccBfd25e85D568a716Ce7"
+    # DAppManager
+    DAppManagerContractAddr_Test = "0x4C85a0888Fa40a959Ee31DFEc916475eB64931F7"
+    DAppManagerContractAddr_Main = "0x7A3cec37f4975CD2f3cccBfd25e85D568a716Ce7"
