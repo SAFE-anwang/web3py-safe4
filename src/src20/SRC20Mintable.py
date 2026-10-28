@@ -1,7 +1,7 @@
 from eth_typing import Address
 from web3 import Web3
 
-from safe4.utils import Safe4Contract
+from utils import Safe4Contract
 
 
 class SRC20Mintable(Safe4Contract):

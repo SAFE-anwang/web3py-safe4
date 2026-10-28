@@ -1,8 +1,9 @@
 from eth_typing import Address
 from web3 import Web3
 
+from utils import Safe4Contract
+from .base import Safe4ContractAddress, Safe4ContractABI
 from ..types.supernode import SuperNodeInfo
-from ..utils import Safe4ContractAddress, Safe4ContractABI, Safe4Contract
 
 
 class SuperNode:
@@ -47,8 +48,10 @@ class SuperNode:
         return self.logicContract.call(privateKey=privateKey, method="changeDescriptionByID",
                                        parameters=[id, description])
 
-    def changeIncentivePlan(self, privateKey: str, id: int, creatorIncentive: int, partnerIncentive: int, voterIncentive: int) -> str:
-        return self.logicContract.call(privateKey=privateKey, method="changeIncentivePlan", parameters=[id, creatorIncentive, partnerIncentive, voterIncentive])
+    def changeIncentivePlan(self, privateKey: str, id: int, creatorIncentive: int, partnerIncentive: int,
+                            voterIncentive: int) -> str:
+        return self.logicContract.call(privateKey=privateKey, method="changeIncentivePlan",
+                                       parameters=[id, creatorIncentive, partnerIncentive, voterIncentive])
 
     def getInfo(self, addr: Address) -> SuperNodeInfo:
         return self.storageContract.query(method="getInfo", parameters=[addr], outType=SuperNodeInfo)

@@ -1,8 +1,9 @@
 from eth_typing import Address
 from web3 import Web3
 
+from utils import Safe4Contract
+from .base import Safe4ContractAddress, Safe4ContractABI
 from ..types.safe3 import AvailableSafe3Info, LockedSafe3Info
-from ..utils import Safe4ContractAddress, Safe4ContractABI, Safe4Contract
 
 
 class Safe3(Safe4Contract):

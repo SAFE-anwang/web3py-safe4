@@ -1,5 +1,6 @@
 from web3 import Web3
 
+from .base import Safe4ContractAddress, Safe4ContractABI
 from ..types.sysproperty import PropertyInfo, UnconfirmedPropertyInfo
 from ..utils import Safe4ContractAddress, Safe4ContractABI, Safe4Contract
 

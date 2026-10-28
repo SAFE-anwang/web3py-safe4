@@ -1,8 +1,9 @@
 from eth_typing import Address
 from web3 import Web3
 
+from utils import Safe4Contract
+from ..base import Safe4ContractAddress, Safe4ContractABI
 from ...types.accountmanager import AccountRecord, AccountAmountInfo
-from ...utils import Safe4ContractAddress, Safe4ContractABI, Safe4Contract
 
 
 class PettyLock01(Safe4Contract):

@@ -1,8 +1,8 @@
 from eth_typing import Address
 from web3 import Web3
 
+from utils import Safe4Contract
 from .types import LockRecord
-from safe4.utils import Safe4Contract
 
 
 class SRC20LockFactory(Safe4Contract):

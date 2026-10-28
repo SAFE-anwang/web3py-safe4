@@ -1,8 +1,9 @@
 from eth_typing import Address
 from web3 import Web3
 
+from utils import Safe4Contract
+from ..base import Safe4ContractABI, Safe4ContractAddress
 from ...types.dapp import DAppInfo
-from ...utils import Safe4ContractAddress, Safe4ContractABI, Safe4Contract
 
 
 class DAppManager(Safe4Contract):
