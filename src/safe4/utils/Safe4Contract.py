@@ -2,6 +2,9 @@ import json
 from dataclasses import fields, is_dataclass
 from typing import Any, get_type_hints, get_origin
 
+import rlp
+from eth_abi import encode
+from eth_utils import to_checksum_address, keccak
 from web3 import Web3
 from web3.contract import Contract
 from web3.types import TxParams, Wei
@@ -14,6 +17,46 @@ class Safe4Contract:
             address=Web3.to_checksum_address(contractAddress),
             abi=json.loads(contractABI)
         )
+
+    def calcContractAddress(self, sender: str, nonce: int) -> str:
+        sender_bytes = bytes.fromhex(sender[2:] if sender.startswith("0x") else sender)
+        encoded = rlp.encode([sender_bytes, nonce])
+        return to_checksum_address(keccak(encoded)[12:])
+
+    def deployContract(self,
+               privateKey: str,
+               bytecode: str,
+               parameters: list[Any] | None = None,
+               ) -> Any:
+        if not bytecode.startswith("0x"):
+            bytecode = "0x" + bytecode
+        address = self.w3.eth.account.from_key(privateKey).address
+        nonce = self.w3.eth.get_transaction_count(address)
+
+        data = bytecode
+        if parameters is not None:
+            data += encode(parameters).hex()
+        try:
+            args: TxParams = {
+                "from": address,
+                "data": data,
+            }
+            estimated = self.w3.eth.estimate_gas(args)
+        except Exception as e:
+            raise e
+
+        gas = int(estimated * 1.2)
+        args = {
+            "from": address,
+            "nonce": nonce,
+            "gas": gas,
+            "gasPrice": self.w3.eth.gas_price,
+            "chainId": self.w3.eth.chain_id,
+            "data": data,
+        }
+        signed = self.w3.eth.account.sign_transaction(args, privateKey)
+        tx_hash = self.w3.eth.send_raw_transaction(signed.raw_transaction)
+        return self.calcContractAddress(address, nonce) + "-0x" + tx_hash.hex()
 
     def call(self,
              privateKey: str,
