@@ -1,7 +1,7 @@
 from eth_typing import Address
 from web3 import Web3
 
-from safe4.types.src20 import LockRecord
+from .types import LockRecord
 from safe4.utils import Safe4Contract
 
 
