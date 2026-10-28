@@ -24,10 +24,10 @@ class Safe4Contract:
         return to_checksum_address(keccak(encoded)[12:])
 
     def deployContract(self,
-               privateKey: str,
-               bytecode: str,
-               parameters: list[Any] | None = None,
-               ) -> Any:
+                       privateKey: str,
+                       bytecode: str,
+                       parameters: list[Any] | None = None,
+                       ) -> Any:
         if not bytecode.startswith("0x"):
             bytecode = "0x" + bytecode
         address = self.w3.eth.account.from_key(privateKey).address
