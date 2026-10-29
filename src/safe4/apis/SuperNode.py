@@ -1,4 +1,3 @@
-from eth_typing import Address
 from web3 import Web3
 
 from utils import Safe4Contract
@@ -13,36 +12,42 @@ class SuperNode:
         self.storageContract = Safe4Contract(w3, Safe4ContractAddress.SuperNodeStorageContractAddr,
                                              Safe4ContractABI.SuperNodeStorageABI)
 
-    def register(self, privateKey: str, value: int, isUnion: bool, addr: Address, lockDay: int, name: str, enode: str,
+    def register(self, privateKey: str, value: int, isUnion: bool, addr: str, lockDay: int, name: str, enode: str,
                  description: str, creatorIncentive: int, partnerIncentive: int, voterIncentive: int) -> str:
         return self.logicContract.call(privateKey=privateKey, value=value, method="register",
-                                       parameters=[isUnion, addr, lockDay, name, enode, description, creatorIncentive,
+                                       parameters=[isUnion, Web3.to_checksum_address(addr), lockDay, name, enode,
+                                                   description, creatorIncentive,
                                                    partnerIncentive, voterIncentive])
 
-    def appendRegister(self, privateKey: str, value: int, addr: Address, lockDay: int) -> str:
+    def appendRegister(self, privateKey: str, value: int, addr: str, lockDay: int) -> str:
         return self.logicContract.call(privateKey=privateKey, value=value, method="appendRegister",
-                                       parameters=[addr, lockDay])
+                                       parameters=[Web3.to_checksum_address(addr), lockDay])
 
-    def turnRegister(self, privateKey: str, addr: Address, lockID: int) -> str:
-        return self.logicContract.call(privateKey=privateKey, method="turnRegister", parameters=[addr, lockID])
+    def turnRegister(self, privateKey: str, addr: str, lockID: int) -> str:
+        return self.logicContract.call(privateKey=privateKey, method="turnRegister",
+                                       parameters=[Web3.to_checksum_address(addr), lockID])
 
-    def changeAddress(self, privateKey: str, addr: Address, newAddr: Address) -> str:
-        return self.logicContract.call(privateKey=privateKey, method="changeAddress", parameters=[addr, newAddr])
+    def changeAddress(self, privateKey: str, addr: str, newAddr: str) -> str:
+        return self.logicContract.call(privateKey=privateKey, method="changeAddress",
+                                       parameters=[Web3.to_checksum_address(addr), Web3.to_checksum_address(newAddr)])
 
-    def changeName(self, privateKey: str, addr: Address, name: str) -> str:
-        return self.logicContract.call(privateKey=privateKey, method="changeName", parameters=[addr, name])
+    def changeName(self, privateKey: str, addr: str, name: str) -> str:
+        return self.logicContract.call(privateKey=privateKey, method="changeName",
+                                       parameters=[Web3.to_checksum_address(addr), name])
 
     def changeNameByID(self, privateKey: str, id: int, name: str) -> str:
         return self.logicContract.call(privateKey=privateKey, method="changeNameByID", parameters=[id, name])
 
-    def changeEnode(self, privateKey: str, addr: Address, enode: str) -> str:
-        return self.logicContract.call(privateKey=privateKey, method="changeEnode", parameters=[addr, enode])
+    def changeEnode(self, privateKey: str, addr: str, enode: str) -> str:
+        return self.logicContract.call(privateKey=privateKey, method="changeEnode",
+                                       parameters=[Web3.to_checksum_address(addr), enode])
 
     def changeEnodeByID(self, privateKey: str, id: int, enode: str) -> str:
         return self.logicContract.call(privateKey=privateKey, method="changeEnodeByID", parameters=[id, enode])
 
-    def changeDescription(self, privateKey: str, addr: Address, desciption: str) -> str:
-        return self.logicContract.call(privateKey=privateKey, method="changeDescription", parameters=[addr, desciption])
+    def changeDescription(self, privateKey: str, addr: str, desciption: str) -> str:
+        return self.logicContract.call(privateKey=privateKey, method="changeDescription",
+                                       parameters=[Web3.to_checksum_address(addr), desciption])
 
     def changeDescriptionByID(self, privateKey: str, id: int, description: str) -> str:
         return self.logicContract.call(privateKey=privateKey, method="changeDescriptionByID",
@@ -53,8 +58,9 @@ class SuperNode:
         return self.logicContract.call(privateKey=privateKey, method="changeIncentivePlan",
                                        parameters=[id, creatorIncentive, partnerIncentive, voterIncentive])
 
-    def getInfo(self, addr: Address) -> SuperNodeInfo:
-        return self.storageContract.query(method="getInfo", parameters=[addr], outType=SuperNodeInfo)
+    def getInfo(self, addr: str) -> SuperNodeInfo:
+        return self.storageContract.query(method="getInfo", parameters=[Web3.to_checksum_address(addr)],
+                                          outType=SuperNodeInfo)
 
     def getInfoByID(self, id: int) -> SuperNodeInfo:
         return self.storageContract.query(method="getInfoByID", parameters=[id], outType=SuperNodeInfo)
@@ -65,34 +71,39 @@ class SuperNode:
     def getNum(self) -> int:
         return self.storageContract.query(method="getNum", outType=int)
 
-    def getAll(self, start: int, count: int) -> list[Address]:
-        return self.storageContract.query(method="getAll", parameters=[start, count], outType=list[Address])
+    def getAll(self, start: int, count: int) -> list[str]:
+        return self.storageContract.query(method="getAll", parameters=[start, count], outType=list[str])
 
-    def getAddrNum4Creator(self, creator: Address) -> int:
-        return self.storageContract.query(method="getAddrNum4Creator", parameters=[creator], outType=int)
+    def getAddrNum4Creator(self, creator: str) -> int:
+        return self.storageContract.query(method="getAddrNum4Creator", parameters=[Web3.to_checksum_address(creator)],
+                                          outType=int)
 
-    def getAddrs4Creator(self, creator: Address, start: int, count: int) -> list[Address]:
-        return self.storageContract.query(method="getAddrs4Creator", parameters=[creator, start, count],
-                                          outType=list[Address])
+    def getAddrs4Creator(self, creator: str, start: int, count: int) -> list[str]:
+        return self.storageContract.query(method="getAddrs4Creator",
+                                          parameters=[Web3.to_checksum_address(creator), start, count],
+                                          outType=list[str])
 
-    def getAddrNum4Partner(self, partner: Address) -> int:
-        return self.storageContract.query(method="getAddrNum4Partner", parameters=[partner], outType=int)
+    def getAddrNum4Partner(self, partner: str) -> int:
+        return self.storageContract.query(method="getAddrNum4Partner", parameters=[Web3.to_checksum_address(partner)],
+                                          outType=int)
 
-    def getAddrs4Partner(self, partner: Address, start: int, count: int) -> list[Address]:
-        return self.storageContract.query(method="getAddrs4Partner", parameters=[partner, start, count],
-                                          outType=list[Address])
+    def getAddrs4Partner(self, partner: str, start: int, count: int) -> list[str]:
+        return self.storageContract.query(method="getAddrs4Partner",
+                                          parameters=[Web3.to_checksum_address(partner), start, count],
+                                          outType=list[str])
 
-    def getTops(self) -> list[Address]:
-        return self.storageContract.query(method="getTops", outType=list[Address])
+    def getTops(self) -> list[str]:
+        return self.storageContract.query(method="getTops", outType=list[str])
 
-    def getTops4Creator(self, creator: Address) -> list[Address]:
-        return self.storageContract.query(method="getTops4Creator", parameters=[creator], outType=list[Address])
+    def getTops4Creator(self, creator: str) -> list[str]:
+        return self.storageContract.query(method="getTops4Creator", parameters=[Web3.to_checksum_address(creator)],
+                                          outType=list[str])
 
-    def getOfficials(self) -> list[Address]:
-        return self.storageContract.query(method="getOfficials", outType=list[Address])
+    def getOfficials(self) -> list[str]:
+        return self.storageContract.query(method="getOfficials", outType=list[str])
 
-    def exist(self, addr: Address) -> bool:
-        return self.storageContract.query(method="exist", parameters=[addr], outType=bool)
+    def exist(self, addr: str) -> bool:
+        return self.storageContract.query(method="exist", parameters=[Web3.to_checksum_address(addr)], outType=bool)
 
     def existID(self, id: int) -> bool:
         return self.storageContract.query(method="existID", parameters=[id], outType=bool)
@@ -103,20 +114,23 @@ class SuperNode:
     def existLockID(self, lockID: int) -> bool:
         return self.storageContract.query(method="existLockID", parameters=[lockID], outType=bool)
 
-    def existFounder(self, founder: Address) -> bool:
-        return self.storageContract.query(method="existFounder", parameters=[founder], outType=bool)
+    def existFounder(self, founder: str) -> bool:
+        return self.storageContract.query(method="existFounder", parameters=[Web3.to_checksum_address(founder)],
+                                          outType=bool)
 
-    def isValid(self, addr: Address) -> bool:
-        return self.storageContract.query(method="isValid", parameters=[addr], outType=bool)
+    def isValid(self, addr: str) -> bool:
+        return self.storageContract.query(method="isValid", parameters=[Web3.to_checksum_address(addr)], outType=bool)
 
-    def isUnion(self, addr: Address) -> bool:
-        return self.storageContract.query(method="isUnion", parameters=[addr], outType=bool)
+    def isUnion(self, addr: str) -> bool:
+        return self.storageContract.query(method="isUnion", parameters=[Web3.to_checksum_address(addr)], outType=bool)
 
-    def existNodeAddress(self, addr: Address) -> bool:
-        return self.storageContract.query(method="existNodeAddress", parameters=[addr], outType=bool)
+    def existNodeAddress(self, addr: str) -> bool:
+        return self.storageContract.query(method="existNodeAddress", parameters=[Web3.to_checksum_address(addr)],
+                                          outType=bool)
 
     def existNodeEnode(self, enode: str) -> bool:
         return self.storageContract.query(method="existNodeEnode", parameters=[enode], outType=bool)
 
-    def existNodeFounder(self, founder: Address) -> bool:
-        return self.storageContract.query(method="existNodeFounder", parameters=[founder], outType=bool)
+    def existNodeFounder(self, founder: str) -> bool:
+        return self.storageContract.query(method="existNodeFounder", parameters=[Web3.to_checksum_address(founder)],
+                                          outType=bool)

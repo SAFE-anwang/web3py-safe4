@@ -1,15 +1,13 @@
 from dataclasses import dataclass
 
-from eth_typing import Address
-
 from . import SuperNodeMemberInfo, SuperNodeIncentivePlan
 
 
 @dataclass
 class SuperNodeInfo:
     id: int
-    addr: Address
-    creator: Address
+    addr: str
+    creator: str
     enode: str
     description: str
     isOfficial: bool

@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 
-from eth_typing import Address
-
 
 @dataclass
 class LockedSafe3Info:
@@ -10,5 +8,5 @@ class LockedSafe3Info:
     remainLockHeight: int
     lockDay: int
     isMN: bool
-    safe4Addr: Address
+    safe4Addr: str
     redeemHeight: int

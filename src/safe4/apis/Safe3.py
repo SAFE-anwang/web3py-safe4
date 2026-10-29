@@ -1,4 +1,3 @@
-from eth_typing import Address
 from web3 import Web3
 
 from utils import Safe4Contract
@@ -10,12 +9,12 @@ class Safe3(Safe4Contract):
     def __init__(self, w3: Web3):
         super().__init__(w3, Safe4ContractAddress.ProposalContractAddr, Safe4ContractABI.ProposalABI)
 
-    def batchRedeemSafe3(self, callerPrivateKey: str, privateKeys: list[str], targetAddr: Address) -> str:
+    def batchRedeemSafe3(self, callerPrivateKey: str, privateKeys: list[str], targetAddr: str) -> str:
         return self.call(privateKey=callerPrivateKey, method="batchRedeemSafe3",
                          parameters=[title, payAmount, payTime, startPayTime, endPayTime, description])
 
     def batchRedeemMasterNode(self, callerPrivateKey: str, privateKeys: list[str], enodes: list[str],
-                              targetAddr: Address) -> str:
+                              targetAddr: str) -> str:
         return self.call(privateKey=callerPrivateKey, method="batchRedeemMasterNode", parameters=[id, voteResult])
 
     def getAllAvailableNum(self) -> int:
@@ -40,7 +39,7 @@ class Safe3(Safe4Contract):
         return self.query(method="getLockedNum", parameters=[safe3Addr], outType=int)
 
     def getLockedInfo(self, safe3Addr: str, start: int, count: int) -> LockedSafe3Info:
-        return self.query(method="getLockedInfo", parameters=[safe3Addr], outType=LockedSafe3Info)
+        return self.query(method="getLockedInfo", parameters=[safe3Addr, start, count], outType=LockedSafe3Info)
 
     def getAllPettyNum(self) -> int:
         return self.query(method="getAllPettyNum", outType=int)

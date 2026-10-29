@@ -1,9 +1,7 @@
 from dataclasses import dataclass
 
-from eth_typing import Address
-
 
 @dataclass
 class SNVoteRetInfo:
-    addrs: list[Address]
+    addrs: list[str]
     voteNums: list[int]

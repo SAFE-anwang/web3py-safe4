@@ -1,13 +1,11 @@
 from dataclasses import dataclass
 
-from eth_typing import Address
-
 
 @dataclass
 class RecordUseInfo:
-    frozenAddr: Address
+    frozenAddr: str
     freezeHeight: int
     unfreezeHeight: int
-    votedAddr: Address
+    votedAddr: str
     voteHeight: int
     releaseHeight: int

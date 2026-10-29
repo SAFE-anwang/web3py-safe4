@@ -1,4 +1,3 @@
-from eth_typing import Address
 from web3 import Web3
 
 from utils import Safe4Contract
@@ -60,11 +59,12 @@ class Proposal(Safe4Contract):
     def getAll(self, start: int, count: int) -> list[int]:
         return self.query(method="getAll", parameters=[start, count], outType=list[int])
 
-    def getMineNum(self, creator: Address) -> int:
-        return self.query(method="getMineNum", parameters=[creator], outType=int)
+    def getMineNum(self, creator: str) -> int:
+        return self.query(method="getMineNum", parameters=[Web3.to_checksum_address(creator)], outType=int)
 
-    def getMines(self, creator: Address, start: int, count: int) -> list[int]:
-        return self.query(method="getMines", parameters=[creator, start, count], outType=list[int])
+    def getMines(self, creator: str, start: int, count: int) -> list[int]:
+        return self.query(method="getMines", parameters=[Web3.to_checksum_address(creator), start, count],
+                          outType=list[int])
 
     def exist(self, id: int) -> bool:
         return self.query(method="exist", parameters=[id], outType=bool)

@@ -1,12 +1,10 @@
 from dataclasses import dataclass
 
-from eth_typing import Address
-
 
 @dataclass
 class VoteRecord:
-    voterAddr: Address
-    dstAddr: Address
+    voterAddr: str
+    dstAddr: str
     amount: int
     num: int
     height: int

@@ -1,12 +1,10 @@
 from dataclasses import dataclass
 
-from eth_typing import Address
-
 
 @dataclass
 class ProposalInfo:
     id: int
-    creator: Address
+    creator: str
     title: str
     payAmount: int
     payTimes: int

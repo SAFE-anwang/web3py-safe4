@@ -1,4 +1,3 @@
-from eth_typing import Address
 from web3 import Web3
 
 from utils import Safe4Contract
@@ -13,16 +12,18 @@ class DAppManager(Safe4Contract):
         else:
             super().__init__(w3, Safe4ContractAddress.DAppManagerContractAddr_Main, Safe4ContractABI.DAppManagerABI)
 
-    def register(self, privateKey: str, name: str, contractAddr: Address, runUrl: str, description: str, gitUrl: str,
+    def register(self, privateKey: str, name: str, contractAddr: str, runUrl: str, description: str, gitUrl: str,
                  officialUrl: str, officialEmail: str) -> str:
         return self.call(privateKey=privateKey, method="register",
-                         parameters=[name, contractAddr, runUrl, description, gitUrl, officialUrl, officialEmail])
+                         parameters=[name, Web3.to_checksum_address(contractAddr), runUrl, description, gitUrl,
+                                     officialUrl, officialEmail])
 
     def setName(self, privateKey: str, id: int, name: str) -> str:
         return self.call(privateKey=privateKey, method="setName", parameters=[id, name])
 
-    def setContractAddr(self, privateKey: str, id: int, contractAddr: Address) -> str:
-        return self.call(privateKey=privateKey, method="setContractAddr", parameters=[id, contractAddr])
+    def setContractAddr(self, privateKey: str, id: int, contractAddr: str) -> str:
+        return self.call(privateKey=privateKey, method="setContractAddr",
+                         parameters=[id, Web3.to_checksum_address(contractAddr)])
 
     def setRunUrl(self, privateKey: str, id: int, runUrl: str) -> str:
         return self.call(privateKey=privateKey, method="setRunUrl", parameters=[id, runUrl])
@@ -36,8 +37,9 @@ class DAppManager(Safe4Contract):
     def setOfficialEmail(self, privateKey: str, id: int, officialEmail: str) -> str:
         return self.call(privateKey=privateKey, method="setOfficialEmail", parameters=[id, officialEmail])
 
-    def setOfficialAccount(self, privateKey: str, id: int, account: Address) -> str:
-        return self.call(privateKey=privateKey, method="setOfficialAccount", parameters=[id, account])
+    def setOfficialAccount(self, privateKey: str, id: int, account: str) -> str:
+        return self.call(privateKey=privateKey, method="setOfficialAccount",
+                         parameters=[id, Web3.to_checksum_address(account)])
 
     def setDescription(self, privateKey: str, id: int, description: str) -> str:
         return self.call(privateKey=privateKey, method="setDescription", parameters=[id, description])
@@ -60,8 +62,9 @@ class DAppManager(Safe4Contract):
     def getInfoByName(self, name: str) -> DAppInfo:
         return self.query(method="getInfoByName", parameters=[name], outType=DAppInfo)
 
-    def getInfoByContractAddr(self, contractAddr: Address) -> DAppInfo:
-        return self.query(method="getInfoByContractAddr", parameters=[contractAddr], outType=DAppInfo)
+    def getInfoByContractAddr(self, contractAddr: str) -> DAppInfo:
+        return self.query(method="getInfoByContractAddr", parameters=[Web3.to_checksum_address(contractAddr)],
+                          outType=DAppInfo)
 
     def getInfoByRunUrl(self, runUrl: str) -> DAppInfo:
         return self.query(method="getInfoByRunUrl", parameters=[runUrl], outType=DAppInfo)
@@ -75,11 +78,12 @@ class DAppManager(Safe4Contract):
     def getIDs(self, start: int, count: int) -> list[int]:
         return self.query(method="getIDs", parameters=[start, count], outType=list[int])
 
-    def getMineNum(self, account: Address) -> int:
-        return self.query(method="getMineNum", parameters=[account], outType=int)
+    def getMineNum(self, account: str) -> int:
+        return self.query(method="getMineNum", parameters=[Web3.to_checksum_address(account)], outType=int)
 
-    def getMineIDs(self, account: Address, start: int, count: int) -> list[int]:
-        return self.query(method="getMineIDs", parameters=[account, start, count], outType=list[int])
+    def getMineIDs(self, account: str, start: int, count: int) -> list[int]:
+        return self.query(method="getMineIDs", parameters=[Web3.to_checksum_address(account), start, count],
+                          outType=list[int])
 
     def existID(self, id: int) -> bool:
         return self.query(method="existID", parameters=[id], outType=bool)
@@ -87,8 +91,8 @@ class DAppManager(Safe4Contract):
     def existName(self, name: str) -> bool:
         return self.query(method="existName", parameters=[name], outType=bool)
 
-    def existContractAddr(self, contractAddr: Address) -> bool:
-        return self.query(method="existContractAddr", parameters=[contractAddr], outType=bool)
+    def existContractAddr(self, contractAddr: str) -> bool:
+        return self.query(method="existContractAddr", parameters=[Web3.to_checksum_address(contractAddr)], outType=bool)
 
     def existRunUrl(self, runUrl: str) -> bool:
         return self.query(method="existRunUrl", parameters=[runUrl], outType=bool)
@@ -102,5 +106,5 @@ class DAppManager(Safe4Contract):
     def getLogoPayAmount(self) -> int:
         return self.query(method="getLogoPayAmount", outType=int)
 
-    def getLogoPayAddress(self) -> Address:
-        return self.query(method="getLogoPayAddress", outType=Address)
+    def getLogoPayAddress(self) -> str:
+        return self.query(method="getLogoPayAddress", outType=str)

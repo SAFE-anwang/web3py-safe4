@@ -1,11 +1,9 @@
 from dataclasses import dataclass
 
-from eth_typing import Address
-
 
 @dataclass
 class SuperNodeMemberInfo:
     lockId: int
-    addr: Address
+    addr: str
     amount: int
     unlockHeight: int
