@@ -1,12 +1,10 @@
 from dataclasses import dataclass
 
-from eth_typing import Address
-
 
 @dataclass
 class LockRecord:
     id: int
-    addr: Address
+    addr: str
     amount: int
     lockDay: int
     startHeight: int

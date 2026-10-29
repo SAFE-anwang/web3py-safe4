@@ -1,4 +1,3 @@
-from eth_typing import Address
 from web3 import Web3
 
 from utils import Safe4Contract
@@ -13,40 +12,52 @@ class SRC20LockFactory(Safe4Contract):
         else:
             super().__init__(w3, "0x6A6dFAF83cc1741FE08A9EFDea596dEad68f7420", self.abi)
 
-    def lock(self, privateKey: str, token: Address, to: Address, amount: int, lockDay: int) -> str:
-        return self.call(privateKey=privateKey, method="lock", parameters=[token, to, amount, lockDay])
+    def lock(self, privateKey: str, token: str, to: str, amount: int, lockDay: int) -> str:
+        return self.call(privateKey=privateKey, method="lock",
+                         parameters=[Web3.to_checksum_address(token), Web3.to_checksum_address(to), amount, lockDay])
 
-    def batchLock(self, privateKey: str, token: Address, to: Address, amount: int, times: int, spaceDay: int,
+    def batchLock(self, privateKey: str, token: str, to: str, amount: int, times: int, spaceDay: int,
                   startDay: int) -> str:
         return self.call(privateKey=privateKey, method="batchLock",
-                         parameters=[token, to, amount, times, spaceDay, startDay])
+                         parameters=[Web3.to_checksum_address(token), Web3.to_checksum_address(to), amount, times,
+                                     spaceDay, startDay])
 
-    def withdrawByID(self, privateKey: str, token: Address, ids: list[int]) -> str:
-        return self.call(privateKey=privateKey, method="withdrawByID", parameters=[token, ids])
+    def withdrawByID(self, privateKey: str, token: str, ids: list[int]) -> str:
+        return self.call(privateKey=privateKey, method="withdrawByID",
+                         parameters=[Web3.to_checksum_address(token), ids])
 
-    def getTotalIDNum(self, token: Address, addr: Address) -> int:
-        return self.query(method="getTotalIDNum", parameters=[token, addr], outType=int)
+    def getTotalIDNum(self, token: str, addr: str) -> int:
+        return self.query(method="getTotalIDNum",
+                          parameters=[Web3.to_checksum_address(token), Web3.to_checksum_address(addr)], outType=int)
 
-    def getTotalIDs(self, token: Address, addr: Address) -> list[int]:
-        return self.query(method="getTotalIDs", parameters=[token, addr], outType=list[int])
+    def getTotalIDs(self, token: str, addr: str) -> list[int]:
+        return self.query(method="getTotalIDs",
+                          parameters=[Web3.to_checksum_address(token), Web3.to_checksum_address(addr)],
+                          outType=list[int])
 
-    def getAvailableIDNum(self, token: Address, addr: Address) -> int:
-        return self.query(method="getAvailableIDNum", parameters=[token, addr], outType=int)
+    def getAvailableIDNum(self, token: str, addr: str) -> int:
+        return self.query(method="getAvailableIDNum",
+                          parameters=[Web3.to_checksum_address(token), Web3.to_checksum_address(addr)], outType=int)
 
-    def getAvailableIDs(self, token: Address, addr: Address) -> list[int]:
-        return self.query(method="getAvailableIDs", parameters=[token, addr], outType=list[int])
+    def getAvailableIDs(self, token: str, addr: str) -> list[int]:
+        return self.query(method="getAvailableIDs",
+                          parameters=[Web3.to_checksum_address(token), Web3.to_checksum_address(addr)],
+                          outType=list[int])
 
-    def getLockedIDNum(self, token: Address, addr: Address) -> int:
-        return self.query(method="getLockedIDNum", parameters=[token, addr], outType=int)
+    def getLockedIDNum(self, token: str, addr: str) -> int:
+        return self.query(method="getLockedIDNum",
+                          parameters=[Web3.to_checksum_address(token), Web3.to_checksum_address(addr)], outType=int)
 
-    def getLockedIDs(self, token: Address, addr: Address) -> list[int]:
-        return self.query(method="getLockedIDs", parameters=[token, addr], outType=list[int])
+    def getLockedIDs(self, token: str, addr: str) -> list[int]:
+        return self.query(method="getLockedIDs",
+                          parameters=[Web3.to_checksum_address(token), Web3.to_checksum_address(addr)],
+                          outType=list[int])
 
-    def getRecordByID(self, token: Address, id: int) -> LockRecord:
-        return self.query(method="getRecordByID", parameters=[token, id], outType=LockRecord)
+    def getRecordByID(self, token: str, id: int) -> LockRecord:
+        return self.query(method="getRecordByID", parameters=[Web3.to_checksum_address(token), id], outType=LockRecord)
 
-    def getLock(self, token: Address) -> Address:
-        return self.query(method="getLock", parameters=[token], outType=Address)
+    def getLock(self, token: str) -> str:
+        return self.query(method="getLock", parameters=[token], outType=str)
 
-    def getToken(self, lock: Address) -> Address:
-        return self.query(method="getToken", parameters=[lock], outType=Address)
+    def getToken(self, lock: str) -> str:
+        return self.query(method="getToken", parameters=[lock], outType=str)

@@ -1,4 +1,3 @@
-from eth_typing import Address
 from web3 import Web3
 
 from utils import Safe4Contract
@@ -17,14 +16,16 @@ class SRC20(Safe4Contract):
         return self.deployContract(privateKey=privateKey, bytecode=self.bytecode,
                                    parameters=[name, symbol, totalSupply])
 
-    def transfer(self, privateKey: str, to: Address, amount: int) -> str:
-        return self.call(privateKey=privateKey, method="transfer", parameters=[to, amount])
+    def transfer(self, privateKey: str, to: str, amount: int) -> str:
+        return self.call(privateKey=privateKey, method="transfer", parameters=[Web3.to_checksum_address(to), amount])
 
-    def approve(self, privateKey: str, spender: Address, amount: int) -> str:
-        return self.call(privateKey=privateKey, method="approve", parameters=[spender, amount])
+    def approve(self, privateKey: str, spender: str, amount: int) -> str:
+        return self.call(privateKey=privateKey, method="approve",
+                         parameters=[Web3.to_checksum_address(spender), amount])
 
-    def transferFrom(self, privateKey: str, fromAddr: Address, to: Address, amount: int) -> str:
-        return self.call(privateKey=privateKey, method="transferFrom", parameters=[fromAddr, to, amount])
+    def transferFrom(self, privateKey: str, fromAddr: str, to: str, amount: int) -> str:
+        return self.call(privateKey=privateKey, method="transferFrom",
+                         parameters=[Web3.to_checksum_address(fromAddr), Web3.to_checksum_address(to), amount])
 
     def name(self) -> str:
         return self.query(method="name", outType=str)
@@ -38,14 +39,15 @@ class SRC20(Safe4Contract):
     def totalSupply(self) -> int:
         return self.query(method="totalSupply", outType=int)
 
-    def owner(self) -> Address:
-        return self.query(method="owner", outType=Address)
+    def owner(self) -> str:
+        return self.query(method="owner", outType=str)
 
-    def balanceOf(self, account: Address) -> int:
-        return self.query(method="balanceOf", parameters=[account], outType=int)
+    def balanceOf(self, account: str) -> int:
+        return self.query(method="balanceOf", parameters=[Web3.to_checksum_address(account)], outType=int)
 
-    def allowance(self, owner: Address, spender: Address) -> int:
-        return self.query(method="allowance", parameters=[owner, spender], outType=int)
+    def allowance(self, owner: str, spender: str) -> int:
+        return self.query(method="allowance",
+                          parameters=[Web3.to_checksum_address(owner), Web3.to_checksum_address(spender)], outType=int)
 
     def setOrgName(self, privateKey: str, orgName: str) -> str:
         return self.call(privateKey=privateKey, method="setOrgName", parameters=[orgName])
@@ -83,5 +85,5 @@ class SRC20(Safe4Contract):
     def getLogoPayAmount(self) -> int:
         return self.query(method="getLogoPayAmount", outType=int)
 
-    def getLogoPayAddress(self) -> Address:
-        return self.query(method="getLogoPayAddress", outType=Address)
+    def getLogoPayAddress(self) -> str:
+        return self.query(method="getLogoPayAddress", outType=str)
