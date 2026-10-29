@@ -1,4 +1,3 @@
-from eth_typing import Address
 from web3 import Web3
 
 from utils import Safe4Contract
@@ -19,20 +18,22 @@ class SRC721(Safe4Contract):
         return self.deployContract(privateKey=privateKey, bytecode=self.bytecode,
                                    parameters=[name, symbol, baseURI, maxSupply, mintPrice])
 
-    def mint(self, privateKey: str, value: int, to: Address, amount: int) -> str:
-        return self.call(privateKey=privateKey, value=value, method="mint", parameters=[to, amount])
+    def mint(self, privateKey: str, value: int, to: str, amount: int) -> str:
+        return self.call(privateKey=privateKey, value=value, method="mint",
+                         parameters=[Web3.to_checksum_address(to), amount])
 
-    def adminMint(self, privateKey: str, to: Address, amount: int) -> str:
-        return self.call(privateKey=privateKey, method="adminMint", parameters=[to, amount])
+    def adminMint(self, privateKey: str, to: str, amount: int) -> str:
+        return self.call(privateKey=privateKey, method="adminMint", parameters=[Web3.to_checksum_address(to), amount])
 
     def withdraw(self, privateKey: str) -> str:
         return self.call(privateKey=privateKey, method="withdraw")
 
-    def approve(self, privateKey: str, to: Address, tokenId: int) -> str:
-        return self.call(privateKey=privateKey, method="approve", parameters=[to, tokenId])
+    def approve(self, privateKey: str, to: str, tokenId: int) -> str:
+        return self.call(privateKey=privateKey, method="approve", parameters=[Web3.to_checksum_address(to), tokenId])
 
-    def safeTransferFrom(self, privateKey: str, fromAddr: Address, to: Address, tokenId: int) -> str:
-        return self.call(privateKey=privateKey, method="safeTransferFrom", parameters=[fromAddr, to, tokenId])
+    def safeTransferFrom(self, privateKey: str, fromAddr: str, to: str, tokenId: int) -> str:
+        return self.call(privateKey=privateKey, method="safeTransferFrom",
+                         parameters=[Web3.to_checksum_address(fromAddr), Web3.to_checksum_address(to), tokenId])
 
     def setBaseURI(self, privateKey: str, baseURI: str) -> str:
         return self.call(privateKey=privateKey, method="setBaseURI", parameters=[baseURI])
@@ -44,10 +45,11 @@ class SRC721(Safe4Contract):
         return self.call(privateKey=privateKey, method="setMaxSupply", parameters=[maxSupply])
 
     def setAllowList(self, privateKey: str, addresses: list[str], amounts: list[int]) -> str:
-        return self.call(privateKey=privateKey, method="setAllowList", parameters=[addresses, amounts])
+        return self.call(privateKey=privateKey, method="setAllowList",
+                         parameters=[[Web3.to_checksum_address(addr) for addr in addresses], amounts])
 
-    def owner(self) -> Address:
-        return self.query(method="owner", outType=Address)
+    def owner(self) -> str:
+        return self.query(method="owner", outType=str)
 
     def name(self) -> str:
         return self.query(method="name", outType=str)
@@ -70,17 +72,18 @@ class SRC721(Safe4Contract):
     def remainSupply(self) -> int:
         return self.query(method="remainSupply", outType=int)
 
-    def balanceOf(self, addr: Address) -> int:
-        return self.query(method="balanceOf", parameters=[addr], outType=int)
+    def balanceOf(self, addr: str) -> int:
+        return self.query(method="balanceOf", parameters=[Web3.to_checksum_address(addr)], outType=int)
 
-    def ownerOf(self, tokenId: int) -> Address:
-        return self.query(method="ownerOf", parameters=[tokenId], outType=Address)
+    def ownerOf(self, tokenId: int) -> str:
+        return self.query(method="ownerOf", parameters=[tokenId], outType=str)
 
     def tokenByIndex(self, index: int) -> int:
         return self.query(method="tokenByIndex", parameters=[index], outType=int)
 
-    def tokenOfOwnerByIndex(self, owner: Address, index: int) -> int:
-        return self.query(method="tokenOfOwnerByIndex", parameters=[index, owner], outType=int)
+    def tokenOfOwnerByIndex(self, owner: str, index: int) -> int:
+        return self.query(method="tokenOfOwnerByIndex", parameters=[index, Web3.to_checksum_address(owner)],
+                          outType=int)
 
     def getAllowAddrNum(self) -> int:
         return self.query(method="getAllowAddrNum", outType=int)
@@ -88,17 +91,17 @@ class SRC721(Safe4Contract):
     def getAllowAddrs(self, start: int, count: int) -> AllowInfo:
         return self.query(method="getAllowAddrs", parameters=[start, count], outType=AllowInfo)
 
-    def amountAllowToMint(self, addr: Address) -> int:
-        return self.query(method="amountAllowToMint", parameters=[addr], outType=int)
+    def amountAllowToMint(self, addr: str) -> int:
+        return self.query(method="amountAllowToMint", parameters=[Web3.to_checksum_address(addr)], outType=int)
 
-    def canMint(self, addr: Address) -> bool:
-        return self.query(method="canMint", parameters=[addr], outType=bool)
+    def canMint(self, addr: str) -> bool:
+        return self.query(method="canMint", parameters=[Web3.to_checksum_address(addr)], outType=bool)
 
     def mintedTotal(self) -> int:
         return self.query(method="mintedTotal", outType=int)
 
-    def getApproved(self, tokenId: int) -> Address:
-        return self.query(method="getApproved", parameters=[tokenId], outType=Address)
+    def getApproved(self, tokenId: int) -> str:
+        return self.query(method="getApproved", parameters=[tokenId], outType=str)
 
     def tokenURI(self, tokenId: int) -> str:
         return self.query(method="tokenURI", parameters=[tokenId], outType=str)
@@ -139,5 +142,5 @@ class SRC721(Safe4Contract):
     def getLogoPayAmount(self) -> int:
         return self.query(method="getLogoPayAmount", outType=int)
 
-    def getLogoPayAddress(self) -> Address:
-        return self.query(method="getLogoPayAddress", outType=Address)
+    def getLogoPayAddress(self) -> str:
+        return self.query(method="getLogoPayAddress", outType=str)
