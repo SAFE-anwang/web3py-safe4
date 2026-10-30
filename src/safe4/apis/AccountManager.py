@@ -16,7 +16,7 @@ class AccountManager(Safe4Contract):
     def batchDeposit4One(self, privateKey: str, value: int, to: str, times: int, spaceDay: int,
                          startDay: int) -> str:
         return self.call(privateKey=privateKey, value=value, method="batchDeposit4One",
-                         parameters=[to, times, spaceDay, startDay])
+                         parameters=[Web3.to_checksum_address(to), times, spaceDay, startDay])
 
     def batchDeposit4Multi(self, privateKey: str, value: int, addrs: list[str], times: int, spaceDay: int,
                            startDay: int) -> str:
