@@ -9,14 +9,6 @@ class Safe3(Safe4Contract):
     def __init__(self, w3: Web3):
         super().__init__(w3, Safe4ContractAddress.ProposalContractAddr, Safe4ContractABI.ProposalABI)
 
-    def batchRedeemSafe3(self, callerPrivateKey: str, privateKeys: list[str], targetAddr: str) -> str:
-        return self.call(privateKey=callerPrivateKey, method="batchRedeemSafe3",
-                         parameters=[title, payAmount, payTime, startPayTime, endPayTime, description])
-
-    def batchRedeemMasterNode(self, callerPrivateKey: str, privateKeys: list[str], enodes: list[str],
-                              targetAddr: str) -> str:
-        return self.call(privateKey=callerPrivateKey, method="batchRedeemMasterNode", parameters=[id, voteResult])
-
     def getAllAvailableNum(self) -> int:
         return self.query(method="getAllAvailableNum", outType=int)
 
