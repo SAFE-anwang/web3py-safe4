@@ -6,6 +6,7 @@ from . import SuperNodeMemberInfo, SuperNodeIncentivePlan
 @dataclass
 class SuperNodeInfo:
     id: int
+    name: str
     addr: str
     creator: str
     enode: str
