@@ -22,6 +22,8 @@ classifiers = [
 
 dependencies = [
     "web3>=6.0.0,<8.0.0",
+    "ecdsa",
+    "base58"
 ]
 
 [project.optional-dependencies]
