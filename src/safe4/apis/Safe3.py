@@ -14,8 +14,8 @@ from ..types.safe3 import AvailableSafe3Info, LockedSafe3Info
 class Safe3Util:
     @staticmethod
     def getCompressedPublicKey(privateKey: str):
-        if not privateKey.startswith('0x'):
-            privateKey = '0x' + privateKey
+        if privateKey.startswith('0x'):
+            privateKey = privateKey[2:]
         privateKey_bytes = bytes.fromhex(privateKey)
         signKey = ecdsa.SigningKey.from_string(privateKey_bytes, curve=ecdsa.SECP256k1)
         verifyKey = signKey.get_verifying_key()
@@ -37,18 +37,18 @@ class Safe3Util:
         checksum = hashlib.sha256(hashlib.sha256(payload).digest()).digest()[:4]
         return base58.b58encode(payload + checksum).decode()
 
-    def signMessage(privateKey: str, message: str) -> bytes:
+    def signMessage(privateKey: str, message: bytes) -> bytes:
         if not privateKey.startswith('0x'):
             privateKey = '0x' + privateKey
         account = Account.from_key(privateKey)
-        message_encoded = encode_defunct(text=message)
+        message_encoded = encode_defunct(primitive=message)
         signed = account.sign_message(message_encoded)
-        return signed.signature.hex()
+        return signed.signature
 
 
 class Safe3(Safe4Contract):
     def __init__(self, w3: Web3):
-        super().__init__(w3, Safe4ContractAddress.ProposalContractAddr, Safe4ContractABI.ProposalABI)
+        super().__init__(w3, Safe4ContractAddress.Safe3ContractAddr, Safe4ContractABI.Safe3ABI)
 
     def batchRedeemSafe3(self, callerPrivateKey: str, privateKeys: list[str], targetAddr: str) -> list[str]:
         availablePubkeys: list[bytes] = []
@@ -60,10 +60,14 @@ class Safe3(Safe4Contract):
         pettySigs: list[bytes] = []
         txids: list[str] = []
 
+        if targetAddr.startswith('0x'):
+            targetAddr = targetAddr[2:]
+
         for privateKey in privateKeys:
             uncompressed_pubkey, compressed_pubkey = Safe3Util.getCompressedPublicKey(privateKey)
             safe3Addr = Safe3Util.getSafe3Addr(compressed_pubkey)
-            sig = Safe3Util.signMessage(privateKey, safe3Addr)
+            payload: bytes = safe3Addr.encode("utf-8") + bytes.fromhex(targetAddr)
+            sig = Safe3Util.signMessage(privateKey, hashlib.sha256(payload).digest())
             if self.existAvailableNeedToRedeem(safe3Addr):
                 availablePubkeys.append(compressed_pubkey)
                 availableSigs.append(sig)
@@ -76,7 +80,8 @@ class Safe3(Safe4Contract):
                 pettySigs.append(sig)
 
             safe3Addr = Safe3Util.getSafe3Addr(uncompressed_pubkey)
-            sig = Safe3Util.signMessage(privateKey, safe3Addr)
+            payload: bytes = safe3Addr.encode("utf-8") + bytes.fromhex(targetAddr)
+            sig = Safe3Util.signMessage(privateKey, hashlib.sha256(payload).digest())
             if self.existAvailableNeedToRedeem(safe3Addr):
                 availablePubkeys.append(uncompressed_pubkey)
                 availableSigs.append(sig)
@@ -91,7 +96,8 @@ class Safe3(Safe4Contract):
         if len(availablePubkeys) > 0:
             for i in range(0, len(availablePubkeys), 20):
                 txids.append(self.call(callerPrivateKey, method="batchRedeemAvailable",
-                                       parameters=[availablePubkeys[i:i + 20], availableSigs[i:i + 20], targetAddr]))
+                                       parameters=[availablePubkeys[i:i + 20], availableSigs[i:i + 20],
+                                                   Web3.to_checksum_address(targetAddr)]))
         if len(lockedPubkeys) > 0:
             while True:
                 totalLockedNum = 0
@@ -99,49 +105,62 @@ class Safe3(Safe4Contract):
                 tempSigs: list[bytes] = []
                 i = 0
                 for i in range(len(lockedNums)):
-                    remainLockedNum = lockedNums[i]
-                    totalLockedNum += remainLockedNum
+                    totalLockedNum += lockedNums[i]
                     if totalLockedNum == 0:
                         continue
                     if totalLockedNum >= 100:
                         tempPubkeys.append(lockedPubkeys[i])
                         tempSigs.append(lockedSigs[i])
                         txids.append(self.call(callerPrivateKey, method="batchRedeemLocked",
-                                               parameters=[tempPubkeys, tempSigs, targetAddr]))
+                                               parameters=[tempPubkeys, tempSigs,
+                                                           Web3.to_checksum_address(targetAddr)]))
+                        if totalLockedNum == 100:
+                            lockedNums[i] = 0
+                        else:
+                            lockedNums[i] -= 100
+                        break
                     else:
                         lockedNums[i] = 0
                         tempPubkeys.append(lockedPubkeys[i])
                         tempSigs.append(lockedSigs[i])
                         if len(tempPubkeys) == 20:
                             txids.append(self.call(callerPrivateKey, method="batchRedeemLocked",
-                                                   parameters=[tempPubkeys, tempSigs, targetAddr]))
+                                                   parameters=[tempPubkeys, tempSigs,
+                                                               Web3.to_checksum_address(targetAddr)]))
                             break
-                if totalLockedNum == 0:
+                else:
+                    if len(tempPubkeys) > 0:
+                        txids.append(
+                            self.call(callerPrivateKey, method="batchRedeemLocked",
+                                      parameters=[tempPubkeys, tempSigs, Web3.to_checksum_address(targetAddr)]))
                     break
-                if i == len(lockedNums):
-                    txids.append(self.call(callerPrivateKey, method="batchRedeemLocked",
-                                           parameters=[tempPubkeys, tempSigs, targetAddr]))
+                if totalLockedNum == 0:
                     break
         if len(pettySigs) > 0:
             for i in range(0, len(pettyPubkeys), 20):
                 txids.append(self.call(callerPrivateKey, method="batchRedeemPetty",
-                                       parameters=[pettyPubkeys[i:i + 20], pettySigs[i:i + 20], targetAddr]))
+                                       parameters=[pettyPubkeys[i:i + 20], pettySigs[i:i + 20],
+                                                   Web3.to_checksum_address(targetAddr)]))
         return txids
 
     def batchRedeemMasterNode(self, callerPrivateKey: str, privateKeys: list[str], enodes: list[str],
                               targetAddr: str) -> list[str]:
         pubkeys: list[bytes] = []
         sigs: list[bytes] = []
+        if targetAddr.startswith("0x"):
+            targetAddr = targetAddr[2:]
         for privateKey in privateKeys:
             uncompressed_pubkey, compressed_pubkey = Safe3Util.getCompressedPublicKey(privateKey)
             safe3Addr = Safe3Util.getSafe3Addr(compressed_pubkey)
-            sig = Safe3Util.signMessage(privateKey, safe3Addr)
+            payload: bytes = safe3Addr.encode("utf-8") + bytes.fromhex(targetAddr)
+            sig = Safe3Util.signMessage(privateKey, hashlib.sha256(payload).digest())
             if self.existMasterNodeNeedToRedeem(safe3Addr):
                 pubkeys.append(compressed_pubkey)
                 sigs.append(sig)
 
             safe3Addr = Safe3Util.getSafe3Addr(uncompressed_pubkey)
-            sig = Safe3Util.signMessage(privateKey, safe3Addr)
+            payload: bytes = safe3Addr.encode("utf-8") + bytes.fromhex(targetAddr)
+            sig = Safe3Util.signMessage(privateKey, hashlib.sha256(payload).digest())
             if self.existMasterNodeNeedToRedeem(safe3Addr):
                 pubkeys.append(uncompressed_pubkey)
                 sigs.append(sig)
@@ -150,7 +169,8 @@ class Safe3(Safe4Contract):
         if len(pubkeys) > 0:
             for i in range(0, len(pubkeys), 20):
                 txids.append(self.call(callerPrivateKey, method="batchRedeemMasterNode",
-                                       parameters=[pubkeys[i:i + 20], sigs[i:i + 20], enodes[i: i + 20], targetAddr]))
+                                       parameters=[pubkeys[i:i + 20], sigs[i:i + 20], enodes[i: i + 20],
+                                                   Web3.to_checksum_address(targetAddr)]))
         return txids
 
     def getAllAvailableNum(self) -> int:
