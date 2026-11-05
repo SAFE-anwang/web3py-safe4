@@ -84,7 +84,7 @@ class Safe4Contract:
         gas = int(estimated * 1.2)
         args = {
             "from": address,
-            "nonce": self.w3.eth.get_transaction_count(address),
+            "nonce": self.w3.eth.get_transaction_count(address, 'pending'),
             "gas": gas,
             "gasPrice": self.w3.eth.gas_price,
             "chainId": self.w3.eth.chain_id,
